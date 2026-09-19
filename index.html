@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>2nd Grade Maze Practice</title>
+<style>
+:root{--ink:#233442;--muted:#66717a;--line:#d7dde1;--soft:#eef8f7;--accent:#287e80;--card:#fff}
+*{box-sizing:border-box}body{margin:0;font-family:Arial,sans-serif;color:var(--ink);background:#f7f9fa}
+main{max-width:850px;margin:0 auto;padding:22px}
+.top{display:flex;justify-content:space-between;align-items:center;gap:15px;flex-wrap:wrap;margin-bottom:16px}
+h1{font-size:24px;margin:0}.sub{color:var(--muted);font-size:14px;margin-top:5px}
+.timer{font-weight:700;font-size:22px;border:1px solid var(--line);border-radius:10px;padding:8px 14px;background:white}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:28px;line-height:2;font-size:18px}
+.choice{display:inline-flex;align-items:center;gap:4px;flex-wrap:wrap;padding:2px 5px;border-radius:8px}
+.choice.active{background:var(--soft);outline:2px solid var(--accent)}
+.word{font:inherit;color:inherit;background:transparent;border:1px solid transparent;border-radius:6px;padding:1px 6px}
+.choice.active .word{background:white;border-color:var(--line);cursor:pointer}
+.word.selected{background:var(--accent)!important;color:white;border-color:var(--accent)!important;font-weight:700}
+.slash{color:var(--muted)}.footer{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-top:20px}
+.status{font-size:14px;color:var(--muted)}button.next,button.restart{border:0;border-radius:9px;padding:12px 20px;font-weight:700;font-size:16px;cursor:pointer}
+button.next{background:var(--accent);color:white}.hidden{display:none!important}
+.results{background:white;border:1px solid var(--line);border-radius:14px;padding:25px}
+.scoregrid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:20px 0}
+.score{border:1px solid var(--line);border-radius:10px;padding:14px;text-align:center}.score strong{font-size:28px;display:block}
+.review{border:1px solid var(--line);border-radius:9px;padding:10px 12px;margin:8px 0}
+.center{text-align:center}
+@media(max-width:600px){main{padding:12px}.card{padding:18px;font-size:17px}.scoregrid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<main id="app">
+<div id="top" class="top">
+  <div><h1>2nd Grade Maze Practice</h1><div class="sub">Story Page <span id="pageNum">1</span> of 10 • <span id="progress">Choice 1 of 3</span></div></div>
+  <div><div class="sub">Time Left</div><div id="timer" class="timer">3:00</div></div>
+</div>
+<section id="activity" class="card">
+  <div id="story"></div>
+  <div class="footer"><div id="status" class="status">Choose a word from the highlighted set.</div><button id="next" class="next hidden" type="button">NEXT →</button></div>
+</section>
+<section id="results" class="results hidden">
+  <div class="center"><h2>Practice Complete!</h2><div id="finishReason" class="sub"></div></div>
+  <div class="scoregrid">
+    <div class="score"><strong id="correctCount">0</strong>Correct</div>
+    <div class="score"><strong id="wrongCount">0</strong>Incorrect</div>
+    <div class="score"><strong id="blankCount">0</strong>Unanswered</div>
+  </div>
+  <h3>Your Answers</h3><div id="review"></div>
+  <div class="center"><button id="restart" class="restart" type="button">Try Again</button></div>
+</section>
+</main>
+<script>
+(()=>{
+const pages=[
+[['Maya and her class were getting ready for school garden day. Their teacher placed seed packets, gloves, and small tools on a table. Maya read the sunflower directions carefully. The class needed to choose a sunny ',['song','place','coat'],1,' near the fence.'],[' Before they went outside, Mr. Lee reminded everyone to carry the tools safely. Maya put on her gloves and joined her partner, Eli. Together they carried a small shovel and a watering ',['cloud','pencil','can'],2,' toward the garden.'],[' When they arrived, Maya noticed that one corner was shaded by a large tree. She remembered that sunflowers need plenty of light, so she suggested a different ',['spot','spoon','story'],0,'.']],
+[['Maya and Eli began by clearing dry leaves from the soil. Under one leaf, Eli discovered a tiny earthworm. Maya explained that worms can help keep garden soil ',['purple','square','healthy'],2,'.'],[' Next, they used the shovel to loosen the dirt. The ground was packed tightly, so they worked slowly until it was soft enough to ',['plant','sing','float'],0,' the seeds.'],[' Mr. Lee showed them how deep each seed should go. Maya made a small hole, dropped in a seed, and gently covered it with ',['music','soil','paper'],1,'.']],
+[['The class planted several rows of seeds. To remember what was growing in each row, students made small labels. Maya wrote SUNFLOWERS in large letters so the sign would be easy to ',['taste','read','carry'],1,'.'],[' Eli pushed the label into the ground beside their row. Then Maya filled the watering can. She poured slowly because too much water could wash the seeds ',['yellow','inside','away'],2,'.'],[' By lunchtime, everyone had finished planting. The students were tired, but they were proud of the neat garden. Mr. Lee thanked them for working as a ',['team','pillow','storm'],0,'.']],
+[['On Monday morning, Maya hurried to the window to check the garden. She could not see any plants yet. Mr. Lee explained that seeds often need time before a sprout appears above the ',['ground','clock','basket'],0,'.'],[' The class took turns watering the rows during the week. On Wednesday, dark clouds filled the sky. Because rain was coming, Mr. Lee said they would not need to ',['whisper','erase','water'],2,' the garden that afternoon.'],[' That night, a gentle rain fell. The next morning, Maya saw tiny drops shining on the soil. She hoped the rain had given the seeds enough ',['noise','moisture','light'],1,'.']],
+[['Several days later, Eli called Maya over to the window. A tiny green shoot was poking through the dirt. The seeds had finally begun to ',['dance','close','sprout'],2,'.'],[' Soon, more green shoots appeared in the row. The class measured them with rulers and recorded the numbers on a chart. This helped them track how much the plants ',['slept','grew','laughed'],1,'.'],[' One plant was shorter than the others. Maya wondered if it was getting enough sunlight. She decided to watch it carefully before making a ',['decision','sandwich','rainbow'],0,'.']],
+[['The next week was unusually hot. The soil dried more quickly than before. Mr. Lee reminded the class to check the dirt. If the soil felt dry, the plants might ',['draw','need','ring'],1,' water.'],[' Maya touched the soil near the sunflowers. It felt dry and crumbly, so she filled the watering can. Eli held the leaves aside while Maya poured water near the base of each ',['plant','window','book'],0,'.'],[' They avoided pouring water all over the leaves. Mr. Lee explained that watering near the roots helps the plant take in what it ',['forgets','paints','needs'],2,'.']],
+[['As the sunflowers grew taller, the stems became thicker. One windy afternoon, a plant leaned to one side. Maya worried that the stem might ',['bake','read','bend'],2,' too far.'],[' Mr. Lee gave the group a thin wooden stake. They placed it beside the plant and loosely tied the stem to it. The stake gave the sunflower extra ',['support','breakfast','weather'],0,'.'],[' Maya checked the tie to make sure it was not too tight. She knew the stem still needed room to ',['hide','grow','count'],1,'.']],
+[['By the end of the month, small buds appeared at the tops of several plants. The class was excited, but Mr. Lee reminded them that the flowers were not open ',['blue','yet','under'],1,'.'],[' Each morning, students checked the buds. One Friday, Maya noticed yellow petals beginning to show. She called Eli over so he could ',['mix','fold','see'],2,' them too.'],[' After the weekend, the first sunflower was fully open. Its bright petals formed a circle around the dark ',['center','river','pocket'],0,'.']],
+[['The open flowers soon attracted visitors. Bees moved from flower to flower while butterflies rested on the petals. Maya watched quietly so she would not ',['measure','mail','scare'],2,' them away.'],[' Mr. Lee explained that some insects help flowers by carrying pollen. Maya wrote this new fact in her science notebook because she wanted to ',['spill','remember','bounce'],1,' it.'],[' The class also noticed birds near the garden. They decided to observe from the window instead of getting too ',['close','sweet','round'],0,'.']],
+[['At the end of the season, the class looked back at photographs from garden day. The tiny seedlings had become tall sunflowers. Maya could hardly believe how much they had ',['whispered','grown','washed'],1,'.'],[' Students shared what they had learned. Eli said plants need care and patience. Maya added that careful observation can help people notice when something needs to ',['sleep','jingle','change'],2,'.'],[' Mr. Lee smiled as the class admired the garden. Their project had started with small seeds, but working together had turned the empty space into something ',['beautiful','hungry','silent'],0,'.']]
+];
+let page=0,active=0,pageSelections=[],answers=Array(30).fill(null),seconds=180,timerId=null,finished=false;
+const story=document.getElementById('story'),next=document.getElementById('next'),status=document.getElementById('status'),progress=document.getElementById('progress'),pageNum=document.getElementById('pageNum'),timer=document.getElementById('timer');
+const gi=(p,i)=>p*3+i;
+function render(){story.innerHTML='';pageNum.textContent=page+1;progress.textContent=active<3?`Choice ${active+1} of 3`:'Page complete';pages[page].forEach((item,i)=>{const span=document.createElement('span');span.append(document.createTextNode(item[0]+'('));const set=document.createElement('span');set.className='choice '+(i===active?'active':'');item[1].forEach((word,j)=>{const b=document.createElement('button');b.type='button';b.className='word'+(pageSelections[i]===j?' selected':'');b.textContent=word;b.disabled=i!==active||finished;b.addEventListener('click',()=>choose(i,j));set.append(b);if(j<2){const s=document.createElement('span');s.className='slash';s.textContent='/';set.append(s)}});span.append(set);span.append(document.createTextNode(')'+item[3]));story.append(span)});const done=active>=3;next.classList.toggle('hidden',!done);status.textContent=done?'Page complete. Click NEXT to continue.':'Choose a word from the highlighted set.'}
+function choose(i,j){if(finished||i!==active)return;pageSelections[i]=j;answers[gi(page,i)]=j;active++;render()}
+function updateTimer(){timer.textContent=`${Math.floor(seconds/60)}:${String(seconds%60).padStart(2,'0')}`}
+function tick(){if(finished)return;seconds--;updateTimer();if(seconds<=0)finish('Time is up! Here is how you did.')}
+function finish(reason){if(finished)return;finished=true;clearInterval(timerId);document.getElementById('activity').classList.add('hidden');document.getElementById('top').classList.add('hidden');document.getElementById('results').classList.remove('hidden');document.getElementById('finishReason').textContent=reason;let c=0,w=0,b=0;const review=document.getElementById('review');review.innerHTML='';pages.forEach((pg,p)=>pg.forEach((item,i)=>{const n=gi(p,i),ans=answers[n];if(ans===null)b++;else if(ans===item[2])c++;else w++;const row=document.createElement('div');row.className='review';const label=ans===null?'Unanswered':ans===item[2]?'Correct':'Incorrect';row.innerHTML=`<strong>#${n+1} — ${label}</strong><br><span class="sub">Your answer: <b>${ans===null?'—':item[1][ans]}</b> • Correct answer: <b>${item[1][item[2]]}</b></span>`;review.append(row)}));document.getElementById('correctCount').textContent=c;document.getElementById('wrongCount').textContent=w;document.getElementById('blankCount').textContent=b}
+next.addEventListener('click',()=>{if(active<3||finished)return;if(page===9){finish('You finished before the timer ended! Here is how you did.');return}page++;active=0;pageSelections=[];render()});
+document.getElementById('restart').addEventListener('click',()=>{clearInterval(timerId);page=0;active=0;pageSelections=[];answers=Array(30).fill(null);seconds=180;finished=false;document.getElementById('results').classList.add('hidden');document.getElementById('activity').classList.remove('hidden');document.getElementById('top').classList.remove('hidden');updateTimer();render();timerId=setInterval(tick,1000)});
+updateTimer();render();timerId=setInterval(tick,1000);
+})();
+</script>
+</body>
+</html>
