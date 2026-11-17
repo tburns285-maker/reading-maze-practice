@@ -57,9 +57,14 @@ function render(){
   <div class="timerbox"><div class="timer">Time: <span id="timer">${formatTime(Math.max(0,timerSeconds))}</span></div></div>
   <div class="story">${body}</div>
   <div class="nav"><span class="count">Page ${page+1} of ${p.pages.length}</span>
-  <button class="arrow" onclick="next()">→</button></div>`;
+  <button class="arrow" onclick="next()" ${answers[page].every(a=>a!==null && a!==undefined)?'':'disabled'}>→</button></div>`;
 }
-function pick(i,j){if(timerExpired){hardStop();return}answers[page][i]=j}
+function pick(i,j){
+  if(timerExpired){hardStop();return}
+  answers[page][i]=j;
+  const arrow=document.querySelector('button.arrow');
+  if(arrow)arrow.disabled=!answers[page].every(a=>a!==null && a!==undefined);
+}
 function scorePractice(){
   const p=GRADES[String(grade)][pidx];
   let correct=0,incorrect=0,incomplete=0;
@@ -89,6 +94,7 @@ function finish(){
   <button class="practice" onclick="practiceHome(${grade})">Back to Grade ${grade} Practices</button></div>`;
 }
 function next(){
+  if(timerExpired || !answers[page].every(a=>a!==null && a!==undefined))return;
   const p=GRADES[String(grade)][pidx];
   if(page<p.pages.length-1){page++;render()}else{finish()}
 }
